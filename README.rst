@@ -1,8 +1,28 @@
-=================
-aldryn-search
-=================
+**Deprecated**
+
+This project is no longer supported.
+
+Divio will undertake no further development or maintenance of this project. If you are interested in continuing to 
+develop it, use the fork functionality from GitHub. We are not able to transfer ownership of the repository to another 
+party.
+
+=============
+Aldryn Search
+=============
 
 This package provides a search indexes for easy Haystack 2 integration with django CMS.
+
+Contributing
+============
+
+This is a an open-source project. We'll be delighted to receive your
+feedback in the form of issues and pull requests. Before submitting your
+pull request, please review our `contribution guidelines
+<http://docs.django-cms.org/en/latest/contributing/index.html>`_.
+
+We're grateful to all contributors who have helped create and maintain this package.
+Contributors are listed at the `contributors <https://github.com/divio/aldryn-search/graphs/contributors>`_
+section.
 
 Usage
 =====
@@ -59,9 +79,9 @@ By default this setting evaluates to a function that checks if the alias is in `
 uses the alias as a language.
 
 
-For a complete Haystack setup, please refer to their `documentation <http://docs.haystacksearch.org/dev/>`_.
+For a complete Haystack setup, please refer to their `documentation <https://django-haystack.readthedocs.io/>`_.
 
-For more documentation, see the `docs folder <https://github.com/aldryn/aldryn-search/tree/master/docs/>`_.
+For more documentation, see the `docs folder <https://github.com/divio/aldryn-search/tree/master/docs/>`_.
 
 Integration with django CMS
 ===========================
@@ -70,8 +90,14 @@ aldryn-search comes with an App Hook for django CMS, and a search view using Dja
 want to use this app hook, you can either subclass it and register it yourself, or set
 ``ALDRYN_SEARCH_REGISTER_APPHOOK`` to ``True``.
 
+If you want to exclude some cms plugins from indexing, you can specify ``ALDRYN_SEARCH_PLUGINS_EXCLUDE`` setting like so::
+
+    ALDRYN_SEARCH_EXCLUDED_PLUGINS = [
+        "PluginA", "PluginB"
+    ]
+
 For pagination, aldryn-search uses ``aldryn_common.paginator.DiggPaginator``. If you want to use this built-in
-pagination, make sure to install`django-spurl <https://github.com/j4mie/django-spurl>`_, and add then add ``spurl``
+pagination, make sure to install `django-spurl <https://github.com/j4mie/django-spurl>`_, and add then add ``spurl``
 to ``INSTALLED_APPS``.
 
 Pagination

@@ -5,6 +5,7 @@
 def gettext(s):
     return s
 
+
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
@@ -69,8 +70,9 @@ HELPER_SETTINGS = {
 
 
 def run():
-    from djangocms_helper import runner
+    from app_helper import runner
     runner.cms('aldryn_search')
+
 
 if __name__ == '__main__':
     run()

@@ -3,13 +3,14 @@ from django.utils.translation import get_language_from_request
 from django.views.generic import ListView
 from django.views.generic.edit import FormMixin
 
+from aldryn_common.paginator import DiggPaginator
 from haystack.forms import ModelSearchForm
 from haystack.query import SearchQuerySet
 
-from aldryn_common.paginator import DiggPaginator
-
+from .compat import is_authenticated
 from .conf import settings
-from .utils import alias_from_language, get_model_path
+from .helpers import get_alias_from_language
+from .utils import get_model_path
 
 
 class AldrynSearchView(FormMixin, ListView):
@@ -61,7 +62,7 @@ class AldrynSearchView(FormMixin, ListView):
 
     def get_queryset(self):
         queryset = self.form.search()
-        if not self.request.user.is_authenticated():
+        if not is_authenticated(self.request.user):
             queryset = queryset.exclude(login_required=True)
         # TODO: fix that url filter.
         # url__in=['', None] make the query exclude "" and "None".
@@ -72,7 +73,7 @@ class AldrynSearchView(FormMixin, ListView):
     def get_search_queryset(self):
         if self.search_queryset is None:
             language = get_language_from_request(self.request, check_path=True)
-            connection_alias = alias_from_language(language)
+            connection_alias = get_alias_from_language(language)
             return self.search_queryset_class(using=connection_alias)
         return self.search_queryset
 

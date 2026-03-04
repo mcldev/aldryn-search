@@ -1,31 +1,52 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import importlib
 import re
-import six
-
-from lxml.html.clean import Cleaner as LxmlCleaner
-from lxml.etree import ParseError, ParserError
-
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-try:
-    from django.utils.encoding import force_unicode
-except ImportError:
-    from django.utils.encoding import force_text as force_unicode
-try:
-    import importlib
-except ImportError:
-    # python 2.6 compatibility
-    from django.utils import importlib
-
-from haystack import DEFAULT_ALIAS
-from haystack.indexes import SearchIndex
+from django.utils.encoding import force_text
 
 from cms.utils.i18n import get_language_code
 
+import six
+from haystack import DEFAULT_ALIAS
+from haystack.indexes import SearchIndex
+from lxml.etree import ParseError, ParserError
+from lxml.html.clean import Cleaner as LxmlCleaner
+
 from .conf import settings
+
+
+def _get_alias_from_language_func():
+    path_or_callable = settings.ALDRYN_SEARCH_ALIAS_FROM_LANGUAGE
+
+    if path_or_callable:
+        try:
+            func = get_callable(path_or_callable)
+        except AttributeError as error:
+            raise ImproperlyConfigured('ALDRYN_SEARCH_ALIAS_FROM_LANGUAGE: %s' % (str(error)))
+        if not callable(func):
+            raise ImproperlyConfigured('ALDRYN_SEARCH_ALIAS_FROM_LANGUAGE: %s is not callable' % func)
+    else:
+        func = alias_from_language
+    return func
+
+
+def _get_language_from_alias_func():
+    path_or_callable = settings.ALDRYN_SEARCH_LANGUAGE_FROM_ALIAS
+
+    if path_or_callable:
+        try:
+            func = get_callable(path_or_callable)
+        except AttributeError as error:
+            raise ImproperlyConfigured('ALDRYN_SEARCH_LANGUAGE_FROM_ALIAS: %s' % (str(error)))
+        if not callable(func):
+            raise ImproperlyConfigured('ALDRYN_SEARCH_LANGUAGE_FROM_ALIAS: %s is not callable' % func)
+    else:
+        func = language_from_alias
+    return func
 
 
 def alias_from_language(language):
@@ -57,21 +78,6 @@ def get_callable(string_or_callable):
         module_name, object_name = string_or_callable.rsplit('.', 1)
         module = importlib.import_module(module_name)
         return getattr(module, object_name)
-
-
-def _get_language_from_alias_func():
-    path_or_callable = settings.ALDRYN_SEARCH_LANGUAGE_FROM_ALIAS
-
-    if path_or_callable:
-        try:
-            func = get_callable(path_or_callable)
-        except AttributeError as error:
-            raise ImproperlyConfigured('ALDRYN_SEARCH_LANGUAGE_FROM_ALIAS: %s' % (str(error)))
-        if not callable(func):
-            raise ImproperlyConfigured('ALDRYN_SEARCH_LANGUAGE_FROM_ALIAS: %s is not callable' % func)
-    else:
-        func = None
-    return func
 
 
 def get_index_base():
@@ -145,7 +151,7 @@ def _strip_tags(value):
     whitespace in between replaced tags to make sure words are not erroneously
     concatenated.
     """
-    return re.sub(r'<[^>]*?>', ' ', force_unicode(value))
+    return re.sub(r'<[^>]*?>', ' ', force_text(value))
 
 
 def strip_tags(value):

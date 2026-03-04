@@ -1,25 +1,28 @@
 # -*- coding: utf-8 -*-
-import warnings
 from django.utils.translation import override
 
 from haystack import indexes
 
 from .conf import settings
-from .helpers import get_request
-from .utils import clean_join, _get_language_from_alias_func
-
-
-language_from_alias = _get_language_from_alias_func()
+from .helpers import get_language_from_alias, get_request
+from .utils import clean_join
 
 
 class AbstractIndex(indexes.SearchIndex):
     text = indexes.CharField(document=True, use_template=False)
 
     def _get_backend(self, using):
+        return self.get_backend(using)
+
+    def get_backend(self, using):
         """
         We set the backend to allow easy access for things like document search.
         """
-        self._backend = super(AbstractIndex, self)._get_backend(using)
+        try:
+            self._backend = super(AbstractIndex, self).get_backend(using)
+        except AttributeError:
+            self._backend = super(AbstractIndex, self)._get_backend(using)
+
         self._backend_alias = using
         return self._backend
 
@@ -73,8 +76,8 @@ class AbstractIndex(indexes.SearchIndex):
         """
         language = None
 
-        if using and language_from_alias:
-            language = language_from_alias(using)
+        if using:
+            language = get_language_from_alias(using)
         return language or settings.ALDRYN_SEARCH_DEFAULT_LANGUAGE
 
     def get_index_kwargs(self, language):
@@ -108,13 +111,6 @@ class AldrynIndexBase(AbstractIndex):
     title = indexes.CharField(stored=True, indexed=False)
     site_id = indexes.IntegerField(stored=True, indexed=True, null=True)
 
-    def __init__(self):
-        if hasattr(self, 'INDEX_TITLE'):
-            warning_message = ('AldrynIndexBase.INDEX_TITLE is deprecated; '
-                               'use AldrynIndexBase.index_title instead')
-            warnings.warn(warning_message, PendingDeprecationWarning)
-        super(AldrynIndexBase, self).__init__()
-
     def get_url(self, obj):
         """
         Equivalent to self.prepare_url.
@@ -142,7 +138,7 @@ class AldrynIndexBase(AbstractIndex):
         self.prepared_data['title'] = self.get_title(obj)
         self.prepared_data['description'] = self.get_description(obj)
 
-        if self.index_title or getattr(self, 'INDEX_TITLE', False):
+        if self.index_title:
             prepared_text = self.prepared_data['text']
             prepared_title = self.prepared_data['title']
             self.prepared_data['text'] = clean_join(
