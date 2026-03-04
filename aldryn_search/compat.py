@@ -1,13 +1,10 @@
-from distutils.version import LooseVersion
+from packaging.version import Version
 
 import cms
 
 
-GTE_CMS_35 = LooseVersion(cms.__version__) >= LooseVersion('3.5')
+GTE_CMS_35 = Version(cms.__version__) >= Version('3.5')
 
 
 def is_authenticated(user):
-    try:
-        return user.is_authenticated()  # Django<1.10
-    except TypeError:
-        return user.is_authenticated  # Django>=1.10
+    return user.is_authenticated

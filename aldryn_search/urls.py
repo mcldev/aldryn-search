@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-from django.conf.urls import url
+from django.urls import re_path
 
 from aldryn_search.views import AldrynSearchView
 
 
 urlpatterns = [
-    url('^$', AldrynSearchView.as_view(), name='aldryn-search'),
+    re_path('^$', AldrynSearchView.as_view(), name='aldryn-search'),
 ]

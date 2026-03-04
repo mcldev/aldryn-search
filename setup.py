@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from setuptools import find_packages, setup
 
 from aldryn_search import __version__
@@ -6,12 +5,13 @@ from aldryn_search import __version__
 
 REQUIREMENTS = [
     'lxml',
+    'lxml-html-clean',
     'setuptools',
+    'packaging',
     'django-appconf',
-    'django-cms>=3.4.5',
-    'django-haystack>=2.0.0',
+    'django-cms>=3.11,<3.12',
+    'django-haystack>=3.3.0',
     'django-spurl',
-    'django-standard-form',
     'aldryn-common>=1.0.2',
 ]
 
@@ -23,18 +23,13 @@ CLASSIFIERS = [
     'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
     'Framework :: Django',
-    'Framework :: Django :: 1.11',
-    'Framework :: Django :: 2.0',
-    'Framework :: Django :: 2.1',
-    'Framework :: Django :: 2.2',
+    'Framework :: Django :: 4.2',
+    'Framework :: Django CMS :: 3.11',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 2',
-    'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.4',
-    'Programming Language :: Python :: 3.5',
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
     'Topic :: Internet :: WWW/HTTP',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     'Topic :: Software Development',
@@ -55,6 +50,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=REQUIREMENTS,
+    python_requires='>=3.9',
     classifiers=CLASSIFIERS,
     test_suite='tests.settings.run',
 )

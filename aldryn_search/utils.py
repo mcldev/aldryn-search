@@ -1,16 +1,12 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import importlib
 import re
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from cms.utils.i18n import get_language_code
 
-import six
 from haystack import DEFAULT_ALIAS
 from haystack.indexes import SearchIndex
 from lxml.etree import ParseError, ParserError
@@ -136,7 +132,7 @@ def get_field_value(obj, name):
 
 
 def get_model_path(model_or_string):
-    if not isinstance(model_or_string, six.string_types):
+    if not isinstance(model_or_string, str):
         # it's a model class
         app_label = model_or_string._meta.app_label
         model_name = model_or_string._meta.object_name
@@ -151,7 +147,7 @@ def _strip_tags(value):
     whitespace in between replaced tags to make sure words are not erroneously
     concatenated.
     """
-    return re.sub(r'<[^>]*?>', ' ', force_text(value))
+    return re.sub(r'<[^>]*?>', ' ', force_str(value))
 
 
 def strip_tags(value):
@@ -161,7 +157,7 @@ def strip_tags(value):
     strip tags. If value isn't valid, just return value since there is
     no tags to strip.
     """
-    if isinstance(value, six.string_types):
+    if isinstance(value, str):
         value = value.strip()
 
         try:
