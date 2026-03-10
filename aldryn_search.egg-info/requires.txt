@@ -1,0 +1,9 @@
+lxml
+lxml-html-clean
+setuptools
+packaging
+django-appconf
+django-cms<3.12,>=3.11
+django-haystack>=3.3.0
+django-spurl
+aldryn-common>=1.0.2
