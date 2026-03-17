@@ -24,7 +24,14 @@ class TitleIndex(get_index_base()):
         return obj.page.publication_date
 
     def prepare_login_required(self, obj):
-        return obj.page.login_required
+        if obj.page.login_required:
+            return True
+        if not GTE_CMS_35:
+            from django.contrib.sites.models import Site
+            site = Site.objects.get(pk=obj.page.site_id)
+        else:
+            site = obj.page.node.site
+        return obj.page.has_view_restrictions(site)
 
     def prepare_site_id(self, obj):
         if not GTE_CMS_35:
